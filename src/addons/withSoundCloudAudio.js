@@ -1,17 +1,17 @@
-import React, { Component } from 'react';
-import SoundCloudAudio from 'soundcloud-audio';
-import hoistStatics from 'hoist-non-react-statics';
+import React, { Component } from "react";
+import SoundCloudAudio from "soundcloud-audio";
+import hoistStatics from "hoist-non-react-statics";
 import {
   stopAllOther,
   addToPlayedStore,
   resetPlayedStore
-} from '../utils/audioStore.js';
+} from "../utils/audioStore.js";
 
-function getDisplayName (WrappedComponent) {
-  return WrappedComponent.displayName || WrappedComponent.name || 'Component';
+function getDisplayName(WrappedComponent) {
+  return WrappedComponent.displayName || WrappedComponent.name || "Component";
 }
 
-export default function withSoundCloudAudio (WrappedComponent) {
+export default function withSoundCloudAudio(WrappedComponent) {
   class WithSoundCloudAudio extends Component {
     constructor(props, context) {
       super(props, context);
@@ -27,7 +27,7 @@ export default function withSoundCloudAudio (WrappedComponent) {
 
       // Don't create a SoundCloudAudio instance
       // if there is no `window`
-      if ('undefined' !== typeof window) {
+      if ("undefined" !== typeof window) {
         if (props.soundCloudAudio) {
           this.soundCloudAudio = props.soundCloudAudio;
         } else {
@@ -47,7 +47,7 @@ export default function withSoundCloudAudio (WrappedComponent) {
 
     componentDidMount() {
       this.mounted = true;
-
+      console.log("You can see the updates!!!");
       this.requestAudio();
       this.listenAudioEvents();
     }
@@ -61,24 +61,22 @@ export default function withSoundCloudAudio (WrappedComponent) {
 
     requestAudio() {
       const { soundCloudAudio } = this;
-      const {
-        resolveUrl,
-        streamUrl,
-        preloadType,
-        onReady
-      } = this.props;
+      const { resolveUrl, streamUrl, preloadType, onReady } = this.props;
 
       if (streamUrl) {
         soundCloudAudio.preload(streamUrl, preloadType);
       } else if (resolveUrl) {
-        soundCloudAudio.resolve(resolveUrl, (data) => {
+        soundCloudAudio.resolve(resolveUrl, data => {
           if (!this.mounted) {
             return;
           }
 
-          this.setState({
-            [data.tracks ? 'playlist' : 'track']: data
-          }, () => onReady && onReady());
+          this.setState(
+            {
+              [data.tracks ? "playlist" : "track"]: data
+            },
+            () => onReady && onReady()
+          );
         });
       }
     }
@@ -87,30 +85,30 @@ export default function withSoundCloudAudio (WrappedComponent) {
       const { soundCloudAudio } = this;
 
       // https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Media_events
-      soundCloudAudio.on('playing', ::this.onAudioStarted);
-      soundCloudAudio.on('timeupdate', ::this.getCurrentTime);
-      soundCloudAudio.on('loadedmetadata', ::this.getDuration);
-      soundCloudAudio.on('seeking', ::this.onSeekingTrack);
-      soundCloudAudio.on('seeked', ::this.onSeekedTrack);
-      soundCloudAudio.on('pause', ::this.onAudioPaused);
-      soundCloudAudio.on('ended', ::this.onAudioEnded);
-      soundCloudAudio.on('volumechange', ::this.onVolumeChange);
-      soundCloudAudio.on('canplay', ::this.onCanPlay);
+      soundCloudAudio.on("playing", ::this.onAudioStarted);
+      soundCloudAudio.on("timeupdate", ::this.getCurrentTime);
+      soundCloudAudio.on("loadedmetadata", ::this.getDuration);
+      soundCloudAudio.on("seeking", ::this.onSeekingTrack);
+      soundCloudAudio.on("seeked", ::this.onSeekedTrack);
+      soundCloudAudio.on("pause", ::this.onAudioPaused);
+      soundCloudAudio.on("ended", ::this.onAudioEnded);
+      soundCloudAudio.on("volumechange", ::this.onVolumeChange);
+      soundCloudAudio.on("canplay", ::this.onCanPlay);
     }
 
     onSeekingTrack() {
-      this.setState({seeking: true});
+      this.setState({ seeking: true });
     }
 
     onSeekedTrack() {
-      this.setState({seeking: false});
+      this.setState({ seeking: false });
     }
 
     onAudioStarted() {
       const { soundCloudAudio } = this;
       const { onStartTrack } = this.props;
 
-      this.setState({playing: true});
+      this.setState({ playing: true });
 
       stopAllOther(soundCloudAudio.playing);
       addToPlayedStore(soundCloudAudio);
@@ -121,7 +119,7 @@ export default function withSoundCloudAudio (WrappedComponent) {
     onAudioPaused() {
       const { onPauseTrack } = this.props;
 
-      this.setState({playing: false});
+      this.setState({ playing: false });
 
       onPauseTrack && onPauseTrack(this.soundCloudAudio);
     }
@@ -129,7 +127,7 @@ export default function withSoundCloudAudio (WrappedComponent) {
     onAudioEnded() {
       const { onStopTrack } = this.props;
 
-      this.setState({playing: false});
+      this.setState({ playing: false });
 
       onStopTrack && onStopTrack(this.soundCloudAudio);
     }
@@ -159,6 +157,16 @@ export default function withSoundCloudAudio (WrappedComponent) {
       });
     }
 
+    loadSong(newUrl) {
+      resetPlayedStore();
+      this.soundCloudAudio.unbindAll();
+      console.log("Calling set state");
+      this.setState({ resolveUrl: newUrl });
+      this.requestAudio();
+      this.listenAudioEvents();
+      console.log("COmponent did HELL YEAH! salto!");
+    }
+
     render() {
       return (
         <WrappedComponent
@@ -170,7 +178,9 @@ export default function withSoundCloudAudio (WrappedComponent) {
     }
   }
 
-  WithSoundCloudAudio.displayName = `withSoundCloudAudio(${getDisplayName(WrappedComponent)})`;
+  WithSoundCloudAudio.displayName = `withSoundCloudAudio(${getDisplayName(
+    WrappedComponent
+  )})`;
   WithSoundCloudAudio.WrappedComponent = WrappedComponent;
 
   return hoistStatics(WithSoundCloudAudio, WrappedComponent);

@@ -548,7 +548,7 @@ function _inherits(subClass, superClass) {
 }
 
 function getDisplayName(WrappedComponent) {
-  return WrappedComponent.displayName || WrappedComponent.name || 'Component';
+  return WrappedComponent.displayName || WrappedComponent.name || "Component";
 }
 
 function withSoundCloudAudio(WrappedComponent) {
@@ -561,12 +561,12 @@ function withSoundCloudAudio(WrappedComponent) {
       var _this = _possibleConstructorReturn(this, (WithSoundCloudAudio.__proto__ || Object.getPrototypeOf(WithSoundCloudAudio)).call(this, props, context));
 
       if (!props.clientId && !props.soundCloudAudio && !props.streamUrl) {
-        console.warn('You need to get a clientId from SoundCloud,\n          pass in an instance of SoundCloudAudio\n          or use streamUrl with audio source instead\n          https://github.com/soundblogs/react-soundplayer#examples');
+        console.warn("You need to get a clientId from SoundCloud,\n          pass in an instance of SoundCloudAudio\n          or use streamUrl with audio source instead\n          https://github.com/soundblogs/react-soundplayer#examples");
       }
 
       // Don't create a SoundCloudAudio instance
       // if there is no `window`
-      if ('undefined' !== typeof window) {
+      if ("undefined" !== typeof window) {
         if (props.soundCloudAudio) {
           _this.soundCloudAudio = props.soundCloudAudio;
         } else {
@@ -586,15 +586,15 @@ function withSoundCloudAudio(WrappedComponent) {
     }
 
     _createClass(WithSoundCloudAudio, [{
-      key: 'componentDidMount',
+      key: "componentDidMount",
       value: function componentDidMount() {
         this.mounted = true;
-
+        console.log("You can see the updates!!!");
         this.requestAudio();
         this.listenAudioEvents();
       }
     }, {
-      key: 'componentWillUnmount',
+      key: "componentWillUnmount",
       value: function componentWillUnmount() {
         this.mounted = false;
 
@@ -602,7 +602,7 @@ function withSoundCloudAudio(WrappedComponent) {
         this.soundCloudAudio.unbindAll();
       }
     }, {
-      key: 'requestAudio',
+      key: "requestAudio",
       value: function requestAudio() {
         var _this2 = this;
 
@@ -621,40 +621,41 @@ function withSoundCloudAudio(WrappedComponent) {
               return;
             }
 
-            _this2.setState(_defineProperty({}, data.tracks ? 'playlist' : 'track', data), function () {
+            _this2.setState(_defineProperty({}, data.tracks ? "playlist" : "track", data), function () {
               return onReady && onReady();
             });
           });
         }
       }
     }, {
-      key: 'listenAudioEvents',
+      key: "listenAudioEvents",
       value: function listenAudioEvents() {
         var soundCloudAudio = this.soundCloudAudio;
 
         // https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Media_events
 
-        soundCloudAudio.on('playing', this.onAudioStarted.bind(this));
-        soundCloudAudio.on('timeupdate', this.getCurrentTime.bind(this));
-        soundCloudAudio.on('loadedmetadata', this.getDuration.bind(this));
-        soundCloudAudio.on('seeking', this.onSeekingTrack.bind(this));
-        soundCloudAudio.on('seeked', this.onSeekedTrack.bind(this));
-        soundCloudAudio.on('pause', this.onAudioPaused.bind(this));
-        soundCloudAudio.on('ended', this.onAudioEnded.bind(this));
-        soundCloudAudio.on('volumechange', this.onVolumeChange.bind(this));
+        soundCloudAudio.on("playing", this.onAudioStarted.bind(this));
+        soundCloudAudio.on("timeupdate", this.getCurrentTime.bind(this));
+        soundCloudAudio.on("loadedmetadata", this.getDuration.bind(this));
+        soundCloudAudio.on("seeking", this.onSeekingTrack.bind(this));
+        soundCloudAudio.on("seeked", this.onSeekedTrack.bind(this));
+        soundCloudAudio.on("pause", this.onAudioPaused.bind(this));
+        soundCloudAudio.on("ended", this.onAudioEnded.bind(this));
+        soundCloudAudio.on("volumechange", this.onVolumeChange.bind(this));
+        soundCloudAudio.on("canplay", this.onCanPlay.bind(this));
       }
     }, {
-      key: 'onSeekingTrack',
+      key: "onSeekingTrack",
       value: function onSeekingTrack() {
         this.setState({ seeking: true });
       }
     }, {
-      key: 'onSeekedTrack',
+      key: "onSeekedTrack",
       value: function onSeekedTrack() {
         this.setState({ seeking: false });
       }
     }, {
-      key: 'onAudioStarted',
+      key: "onAudioStarted",
       value: function onAudioStarted() {
         var soundCloudAudio = this.soundCloudAudio;
         var onStartTrack = this.props.onStartTrack;
@@ -667,7 +668,7 @@ function withSoundCloudAudio(WrappedComponent) {
         onStartTrack && onStartTrack(soundCloudAudio, soundCloudAudio.playing);
       }
     }, {
-      key: 'onAudioPaused',
+      key: "onAudioPaused",
       value: function onAudioPaused() {
         var onPauseTrack = this.props.onPauseTrack;
 
@@ -676,7 +677,7 @@ function withSoundCloudAudio(WrappedComponent) {
         onPauseTrack && onPauseTrack(this.soundCloudAudio);
       }
     }, {
-      key: 'onAudioEnded',
+      key: "onAudioEnded",
       value: function onAudioEnded() {
         var onStopTrack = this.props.onStopTrack;
 
@@ -685,7 +686,7 @@ function withSoundCloudAudio(WrappedComponent) {
         onStopTrack && onStopTrack(this.soundCloudAudio);
       }
     }, {
-      key: 'onVolumeChange',
+      key: "onVolumeChange",
       value: function onVolumeChange() {
         this.setState({
           volume: this.soundCloudAudio.audio.volume,
@@ -693,21 +694,39 @@ function withSoundCloudAudio(WrappedComponent) {
         });
       }
     }, {
-      key: 'getCurrentTime',
+      key: "onCanPlay",
+      value: function onCanPlay() {
+        var onCanPlayTrack = this.props.onCanPlayTrack;
+
+        onCanPlayTrack && onCanPlayTrack(this.soundCloudAudio);
+      }
+    }, {
+      key: "getCurrentTime",
       value: function getCurrentTime() {
         this.setState({
           currentTime: this.soundCloudAudio.audio.currentTime
         });
       }
     }, {
-      key: 'getDuration',
+      key: "getDuration",
       value: function getDuration() {
         this.setState({
           duration: this.soundCloudAudio.audio.duration
         });
       }
     }, {
-      key: 'render',
+      key: "loadSong",
+      value: function loadSong(newUrl) {
+        (0, _audioStore.resetPlayedStore)();
+        this.soundCloudAudio.unbindAll();
+        console.log("Calling set state");
+        this.setState({ resolveUrl: newUrl });
+        this.requestAudio();
+        this.listenAudioEvents();
+        console.log("COmponent did HELL YEAH! salto!");
+      }
+    }, {
+      key: "render",
       value: function render() {
         return _react2.default.createElement(WrappedComponent, _extends({}, this.props, {
           soundCloudAudio: this.soundCloudAudio
@@ -718,7 +737,7 @@ function withSoundCloudAudio(WrappedComponent) {
     return WithSoundCloudAudio;
   }(_react.Component);
 
-  WithSoundCloudAudio.displayName = 'withSoundCloudAudio(' + getDisplayName(WrappedComponent) + ')';
+  WithSoundCloudAudio.displayName = "withSoundCloudAudio(" + getDisplayName(WrappedComponent) + ")";
   WithSoundCloudAudio.WrappedComponent = WrappedComponent;
 
   return (0, _hoistNonReactStatics2.default)(WithSoundCloudAudio, WrappedComponent);
