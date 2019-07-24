@@ -560,6 +560,8 @@ function withSoundCloudAudio(WrappedComponent) {
 
       var _this = _possibleConstructorReturn(this, (WithSoundCloudAudio.__proto__ || Object.getPrototypeOf(WithSoundCloudAudio)).call(this, props, context));
 
+      _this.loadSong = _this.loadSong.bind(_this);
+
       if (!props.clientId && !props.soundCloudAudio && !props.streamUrl) {
         console.warn("You need to get a clientId from SoundCloud,\n          pass in an instance of SoundCloudAudio\n          or use streamUrl with audio source instead\n          https://github.com/soundblogs/react-soundplayer#examples");
       }
@@ -589,7 +591,7 @@ function withSoundCloudAudio(WrappedComponent) {
       key: "componentDidMount",
       value: function componentDidMount() {
         this.mounted = true;
-        console.log("You can see the updates!!!");
+        console.log("You can see the LOAD SONG updates!!!");
         this.requestAudio();
         this.listenAudioEvents();
       }
@@ -614,13 +616,15 @@ function withSoundCloudAudio(WrappedComponent) {
             onReady = _props.onReady;
 
         if (streamUrl) {
+          console.log("In If Stream url", streamUrl);
           soundCloudAudio.preload(streamUrl, preloadType);
         } else if (resolveUrl) {
+          console.log("In If Resolve url", resolveUrl);
           soundCloudAudio.resolve(resolveUrl, function (data) {
             if (!_this2.mounted) {
               return;
             }
-
+            console.log("Setting state: ", data);
             _this2.setState(_defineProperty({}, data.tracks ? "playlist" : "track", data), function () {
               return onReady && onReady();
             });
@@ -717,20 +721,26 @@ function withSoundCloudAudio(WrappedComponent) {
     }, {
       key: "loadSong",
       value: function loadSong(newUrl) {
+        console.log("!!!In Load Song!!!");
+
         (0, _audioStore.resetPlayedStore)();
         this.soundCloudAudio.unbindAll();
-        console.log("Calling set state");
+        console.log("Reset and unbinded");
+
         this.setState({ resolveUrl: newUrl });
         this.requestAudio();
         this.listenAudioEvents();
-        console.log("COmponent did HELL YEAH! salto!");
+        console.log("New audio requested");
       }
     }, {
       key: "render",
       value: function render() {
+        console.log("Load song function: ", this.loadSong);
         return _react2.default.createElement(WrappedComponent, _extends({}, this.props, {
           soundCloudAudio: this.soundCloudAudio
-        }, this.state));
+        }, this.state, {
+          loadSong: this.loadSong
+        }));
       }
     }]);
 
