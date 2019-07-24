@@ -15,6 +15,7 @@ export default function withSoundCloudAudio(WrappedComponent) {
   class WithSoundCloudAudio extends Component {
     constructor(props, context) {
       super(props, context);
+      this.loadSong = this.loadSong.bind(this);
 
       if (!props.clientId && !props.soundCloudAudio && !props.streamUrl) {
         console.warn(
@@ -47,7 +48,6 @@ export default function withSoundCloudAudio(WrappedComponent) {
 
     componentDidMount() {
       this.mounted = true;
-      console.log("You can see the updates!!!");
       this.requestAudio();
       this.listenAudioEvents();
     }
@@ -70,7 +70,6 @@ export default function withSoundCloudAudio(WrappedComponent) {
           if (!this.mounted) {
             return;
           }
-
           this.setState(
             {
               [data.tracks ? "playlist" : "track"]: data
@@ -160,11 +159,10 @@ export default function withSoundCloudAudio(WrappedComponent) {
     loadSong(newUrl) {
       resetPlayedStore();
       this.soundCloudAudio.unbindAll();
-      console.log("Calling set state");
+
       this.setState({ resolveUrl: newUrl });
       this.requestAudio();
       this.listenAudioEvents();
-      console.log("COmponent did HELL YEAH! salto!");
     }
 
     render() {
@@ -173,6 +171,7 @@ export default function withSoundCloudAudio(WrappedComponent) {
           {...this.props}
           soundCloudAudio={this.soundCloudAudio}
           {...this.state}
+          loadSong={this.loadSong}
         />
       );
     }
