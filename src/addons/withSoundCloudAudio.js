@@ -1,14 +1,14 @@
-import React, { Component } from "react";
-import SoundCloudAudio from "soundcloud-audio";
-import hoistStatics from "hoist-non-react-statics";
+import React, { Component } from 'react';
+import SoundCloudAudio from 'soundcloud-audio';
+import hoistStatics from 'hoist-non-react-statics';
 import {
   stopAllOther,
   addToPlayedStore,
   resetPlayedStore
-} from "../utils/audioStore.js";
+} from '../utils/audioStore.js';
 
 function getDisplayName(WrappedComponent) {
-  return WrappedComponent.displayName || WrappedComponent.name || "Component";
+  return WrappedComponent.displayName || WrappedComponent.name || 'Component';
 }
 
 export default function withSoundCloudAudio(WrappedComponent) {
@@ -28,7 +28,7 @@ export default function withSoundCloudAudio(WrappedComponent) {
 
       // Don't create a SoundCloudAudio instance
       // if there is no `window`
-      if ("undefined" !== typeof window) {
+      if ('undefined' !== typeof window) {
         if (props.soundCloudAudio) {
           this.soundCloudAudio = props.soundCloudAudio;
         } else {
@@ -72,7 +72,7 @@ export default function withSoundCloudAudio(WrappedComponent) {
           }
           this.setState(
             {
-              [data.tracks ? "playlist" : "track"]: data
+              [data.tracks ? 'playlist' : 'track']: data
             },
             () => onReady && onReady()
           );
@@ -84,15 +84,15 @@ export default function withSoundCloudAudio(WrappedComponent) {
       const { soundCloudAudio } = this;
 
       // https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Media_events
-      soundCloudAudio.on("playing", ::this.onAudioStarted);
-      soundCloudAudio.on("timeupdate", ::this.getCurrentTime);
-      soundCloudAudio.on("loadedmetadata", ::this.getDuration);
-      soundCloudAudio.on("seeking", ::this.onSeekingTrack);
-      soundCloudAudio.on("seeked", ::this.onSeekedTrack);
-      soundCloudAudio.on("pause", ::this.onAudioPaused);
-      soundCloudAudio.on("ended", ::this.onAudioEnded);
-      soundCloudAudio.on("volumechange", ::this.onVolumeChange);
-      soundCloudAudio.on("canplay", ::this.onCanPlay);
+      soundCloudAudio.on('playing', ::this.onAudioStarted);
+      soundCloudAudio.on('timeupdate', ::this.getCurrentTime);
+      soundCloudAudio.on('loadedmetadata', ::this.getDuration);
+      soundCloudAudio.on('seeking', ::this.onSeekingTrack);
+      soundCloudAudio.on('seeked', ::this.onSeekedTrack);
+      soundCloudAudio.on('pause', ::this.onAudioPaused);
+      soundCloudAudio.on('ended', ::this.onAudioEnded);
+      soundCloudAudio.on('volumechange', ::this.onVolumeChange);
+      soundCloudAudio.on('canplay', ::this.onCanPlay);
     }
 
     onSeekingTrack() {
